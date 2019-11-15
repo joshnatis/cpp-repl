@@ -1,0 +1,46 @@
+#!/bin/bash
+
+ctrl_c()
+{
+	cd .. &&
+	rm -rf .cpp_repl
+	echo ""
+	exit
+}
+
+start()
+{
+	trap ctrl_c INT
+	mkdir .cpp_repl && 
+	cd .cpp_repl &&
+	touch temp.cpp &&
+	echo "#include <iostream>" > temp.cpp
+	echo "using namespace std; int main(){" >> temp.cpp
+}
+
+compile_and_run()
+{
+	echo "}" >> temp.cpp
+	g++ temp.cpp &&
+	./a.out &&
+	echo ""
+	clean
+}
+
+execute_command()
+{
+	echo "$1" >> temp.cpp
+	compile_and_run
+}
+
+clean()
+{
+	echo "#include <iostream>" > temp.cpp
+	echo "using namespace std; int main(){ " >> temp.cpp
+}
+
+start
+while :; do
+	read -p "λ " command
+	execute_command "$command"
+done

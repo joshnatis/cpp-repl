@@ -8,9 +8,23 @@ ctrl_c()
 	exit
 }
 
+print_commands()
+{
+	echo "======="
+	echo "RESTART - reset state"
+	echo "EXIT - quit"
+	echo "FREEWRITE - turn off repl"
+	echo "REPL - turn on repl"
+	echo "INCLUDE - insert #include directive"
+	echo "PEEK - view your program"
+	echo "======="
+	echo ""
+}
+
 start()
 {
 	trap ctrl_c INT
+	print_commands
 	mkdir .cpp_repl && 
 	cd .cpp_repl &&
 	touch temp.cpp &&
@@ -20,17 +34,49 @@ start()
 
 compile_and_run()
 {
-	echo "}" >> temp.cpp
-	g++ temp.cpp &&
-	./a.out &&
-	echo ""
-	clean
+	cat temp.cpp > execute.cpp
+	
+	echo "}" >> execute.cpp &&
+	g++ execute.cpp
+	
+	if [ $? -eq 0 ]; then
+		./a.out &&
+		echo ""
+	else
+		clean
+	fi
 }
 
 execute_command()
 {
-	echo "$1" >> temp.cpp
-	compile_and_run
+	if [ "$1" = "RESTART" ]; then
+		clear
+		print_commands
+		clean
+	elif [ "$1" = "EXIT" ]; then
+		ctrl_c
+	elif [ "$1" = "FREEWRITE" ]; then
+		read -r -p "∞ " command
+		while [ "$command" != "REPL" ]; do
+			echo "$command" >> temp.cpp
+			read -r -p "∞ " command
+		done
+		#compile_and_run
+	elif [ "$1" = "REPL" ]; then
+		:
+	elif [ "$1" = "INCLUDE" ]; then
+		read -r -p "Type your include directive: " inc
+		cat temp.cpp > storage
+		echo "$inc" > temp.cpp
+		cat storage >> temp.cpp
+	elif [ "$1" = "PEEK" ]; then
+		echo "---"
+		cat temp.cpp
+		echo "---"
+	else
+		echo "$1" >> temp.cpp
+		compile_and_run
+	fi
 }
 
 clean()
@@ -41,6 +87,6 @@ clean()
 
 start
 while :; do
-	read -p "λ " command
+	read -r -p "λ " command
 	execute_command "$command"
 done

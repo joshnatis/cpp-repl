@@ -13,15 +13,15 @@ start()
 	trap ctrl_c INT
 	mkdir .cpp_repl && 
 	cd .cpp_repl &&
-	touch temp.cpp &&
-	echo "#include <iostream>" > temp.cpp
-	echo "using namespace std; int main(){" >> temp.cpp
+	touch execute.cpp &&
+	echo "#include <iostream>" > execute.cpp
+	echo "using namespace std; int main(){" >> execute.cpp
 }
 
 compile_and_run()
 {
-	echo "}" >> temp.cpp
-	g++ temp.cpp &&
+	echo "}" >> execute.cpp
+	g++ execute.cpp &&
 	./a.out &&
 	echo ""
 	clean
@@ -29,14 +29,14 @@ compile_and_run()
 
 execute_command()
 {
-	echo "$1" >> temp.cpp
+	echo "$1" >> execute.cpp
 	compile_and_run
 }
 
 clean()
 {
-	echo "#include <iostream>" > temp.cpp
-	echo "using namespace std; int main(){ " >> temp.cpp
+	echo "#include <iostream>" > execute.cpp
+	echo "using namespace std; int main(){ " >> execute.cpp
 }
 
 start

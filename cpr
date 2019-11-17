@@ -27,14 +27,14 @@ start()
 	print_commands
 	mkdir .cpp_repl && 
 	cd .cpp_repl &&
-	touch temp.cpp &&
-	echo "#include <iostream>" > temp.cpp
-	echo "using namespace std; int main(){" >> temp.cpp
+	touch source_code &&
+	echo "#include <iostream>" > source_code
+	echo "using namespace std; int main(){" >> source_code
 }
 
 compile_and_run()
 {
-	cat temp.cpp > execute.cpp
+	cat source_code > execute.cpp
 	
 	echo "}" >> execute.cpp &&
 	g++ execute.cpp
@@ -58,7 +58,7 @@ execute_command()
 	elif [ "$1" = "FREEWRITE" ]; then
 		read -r -p "∞ " command
 		while [ "$command" != "REPL" ]; do
-			echo "$command" >> temp.cpp
+			echo "$command" >> source_code
 			read -r -p "∞ " command
 		done
 		#compile_and_run
@@ -66,23 +66,23 @@ execute_command()
 		:
 	elif [ "$1" = "INCLUDE" ]; then
 		read -r -p "Type your include directive: " inc
-		cat temp.cpp > storage
-		echo "$inc" > temp.cpp
-		cat storage >> temp.cpp
+		cat source_code > temp
+		echo "$inc" > source_code
+		cat temp >> source_code
 	elif [ "$1" = "PEEK" ]; then
 		echo "---"
-		cat temp.cpp
+		cat source_code
 		echo "---"
 	else
-		echo "$1" >> temp.cpp
+		echo "$1" >> source_code
 		compile_and_run
 	fi
 }
 
 clean()
 {
-	echo "#include <iostream>" > temp.cpp
-	echo "using namespace std; int main(){ " >> temp.cpp
+	echo "#include <iostream>" > source_code
+	echo "using namespace std; int main(){ " >> source_code
 }
 
 start
